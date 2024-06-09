@@ -49,11 +49,22 @@ public class Snake {
     }
 
     /**
-     * Сеттер смены направления движения змейки
+     * Сеттер смены направления движения змейки. Если актуальное
+     * направление движения змейки и требуемое от пользователя, противоположно
+     * направленные (= 180 градусов), то направление изменено не будет
      *
      * @param direction - направление движения змейки
      */
     public void setDirection(Direction direction) {
+        if (direction == Direction.LEFT && this.direction == Direction.RIGHT) {
+            return;
+        } else if (direction == Direction.RIGHT && this.direction == Direction.LEFT) {
+            return;
+        } else if (direction == Direction.UP && this.direction == Direction.DOWN) {
+            return;
+        } else if (direction == Direction.DOWN && this.direction == Direction.UP) {
+            return;
+        }
         this.direction = direction;
     }
 
@@ -62,7 +73,7 @@ public class Snake {
      * границу игрового поля, то проиграл, иначе продолжаем
      * движение змейки
      */
-    public void move() {
+    public void move(Apple apple) {
         GameObject newHead = createNewHead();
         int headX = newHead.x;
         int headY = newHead.y;
@@ -73,8 +84,18 @@ public class Snake {
             isAlive = false;
             return;
         }
+        //если змейка пересекает себя, то игра останавливается
+        if (checkCollision(newHead)) {
+            isAlive = false;
+            return;
+        }
         snakeParts.add(0, newHead);
-        removeTail();
+
+        if (apple.x == headX && apple.y == headY) {
+            apple.isAlive = false;
+        } else {
+            removeTail();
+        }
     }
 
     /**
@@ -105,6 +126,31 @@ public class Snake {
      */
     public void removeTail() {
         snakeParts.remove(snakeParts.size() - 1);
+    }
+
+    /**
+     * Метод проверяет пересекает ли "голова" объекта "змейка"
+     * свое "тело"
+     *
+     * @param gameObject - проверяемая ячейка
+     * @return - есть ли пересечение или нет
+     */
+    public boolean checkCollision(GameObject gameObject) {
+        for (GameObject part : snakeParts) {
+            if (part.x == gameObject.x && part.y == gameObject.y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Метод определяет и возвращает количество
+     * элементов (ячеек) в теле змейки
+     * @return - длина змейки (кол-во ячеек)
+     */
+    public int getLength() {
+        return snakeParts.size();
     }
 }
 
