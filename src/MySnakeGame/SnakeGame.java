@@ -9,6 +9,8 @@ public class SnakeGame extends Game {
     public static final int HEIGHT = 15;
     //создаем объект "змейка"
     private Snake snake;
+    //переменная определяет продолжительность хода (мс/ход)
+    private int turnDelay;
 
     /**
      * Переопределенный метод родительского класса,
@@ -25,6 +27,8 @@ public class SnakeGame extends Game {
      * созданию игры
      */
     private void createGame() {
+        turnDelay = 300;
+        setTurnTimer(turnDelay);
         //создаем новую змейку
         snake = new Snake(WIDTH/2, HEIGHT/2);
         //отрисовка игрового поля
@@ -38,10 +42,16 @@ public class SnakeGame extends Game {
     private void drawScene() {
         for (int x = 0; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
-                setCellColor(x, y, Color.DARKSEAGREEN);
+                setCellValueEx(x, y, Color.DARKSEAGREEN, "");
             }
         }
         snake.draw(this);
+    }
+
+    @Override
+    public void onTurn(int step) {
+        snake.move();
+        drawScene();
     }
 }
 

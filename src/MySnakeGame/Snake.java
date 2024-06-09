@@ -50,10 +50,61 @@ public class Snake {
 
     /**
      * Сеттер смены направления движения змейки
+     *
      * @param direction - направление движения змейки
      */
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    /**
+     * Метод проверяет границы движения змейки: если вышли за
+     * границу игрового поля, то проиграл, иначе продолжаем
+     * движение змейки
+     */
+    public void move() {
+        GameObject newHead = createNewHead();
+        int headX = newHead.x;
+        int headY = newHead.y;
+        if ((headX >= SnakeGame.WIDTH
+                || headX < 0)
+                || (headY >= SnakeGame.HEIGHT
+                || headY < 0)) {
+            isAlive = false;
+            return;
+        }
+        snakeParts.add(0, newHead);
+        removeTail();
+    }
+
+    /**
+     * Метод реализует создание "головы" змейки (отрисовка в нужной ячейке),
+     * в зависимости от требуемого направления движения змейки
+     *
+     * @return - новый объект GameObject
+     */
+    public GameObject createNewHead() {
+        //записываем в переменную объект GameObject, где в
+        // настоящий ммомент находится "голова" змейки
+        GameObject oldHead = snakeParts.get(0);
+
+        //реализуем движение змейки, в зависимости от направления
+        if (direction == direction.LEFT) {
+            return new GameObject(oldHead.x - 1, oldHead.y);
+        } else if (direction == direction.RIGHT) {
+            return new GameObject(oldHead.x + 1, oldHead.y);
+        } else if (direction == direction.UP) {
+            return new GameObject(oldHead.x, oldHead.y - 1);
+        } else {
+            return new GameObject(oldHead.x, oldHead.y + 1);
+        }
+    }
+
+    /**
+     * Метод удаляет "хвост" змейки (последний объект GameObject - ячейку)
+     */
+    public void removeTail() {
+        snakeParts.remove(snakeParts.size() - 1);
     }
 }
 
