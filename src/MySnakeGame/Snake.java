@@ -56,6 +56,19 @@ public class Snake {
      * @param direction - направление движения змейки
      */
     public void setDirection(Direction direction) {
+
+        if ((this.direction == direction.LEFT
+                || this.direction == direction.RIGHT)
+                && snakeParts.get(0).x == snakeParts.get(1).x) {
+            return;
+        }
+
+        if ((this.direction == direction.UP
+                || this.direction == direction.DOWN)
+                && snakeParts.get(0).y == snakeParts.get(1).y) {
+            return;
+        }
+
         if (direction == Direction.LEFT && this.direction == Direction.RIGHT) {
             return;
         } else if (direction == Direction.RIGHT && this.direction == Direction.LEFT) {
@@ -90,8 +103,9 @@ public class Snake {
             return;
         }
         snakeParts.add(0, newHead);
-
+        //"змейка" и "яблоко" встречаются
         if (apple.x == headX && apple.y == headY) {
+            //"яблоко" съедено
             apple.isAlive = false;
         } else {
             removeTail();

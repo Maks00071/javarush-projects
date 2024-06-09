@@ -17,6 +17,8 @@ public class SnakeGame extends Game {
     private Apple apple;
     //флаг останова игры
     private boolean isGameStopped;
+    //счетчик очков
+    private int score;
 
     /**
      * Переопределенный метод родительского класса,
@@ -35,6 +37,12 @@ public class SnakeGame extends Game {
      */
     @Override
     public void onKeyPress(Key key) {
+
+        //перезапуск игры
+        if (key == Key.SPACE && isGameStopped) {
+            createGame();
+        }
+
         if (key == Key.LEFT) {
             snake.setDirection(Direction.LEFT);
         } else if (key == Key.RIGHT) {
@@ -60,6 +68,8 @@ public class SnakeGame extends Game {
         isGameStopped = false;
         //отрисовка игрового поля
         drawScene();
+        score = 0;
+        setScore(score);
     }
 
     /**
@@ -105,11 +115,15 @@ public class SnakeGame extends Game {
      * появляться новый объект "яблоко" (Apple apple)
      */
     private void createNewApple() {
-        //координаты "нового яблока"
-        int appleX = getRandomNumber(WIDTH);
-        int appleY = getRandomNumber(HEIGHT);
 
-        apple = new Apple(appleX, appleY);
+        do {
+            //координаты "нового яблока"
+            int appleX = getRandomNumber(WIDTH);
+            int appleY = getRandomNumber(HEIGHT);
+            apple = new Apple(appleX, appleY);
+        }
+        while (snake.checkCollision(apple));
+
         apple.isAlive = true;
     }
 
@@ -125,6 +139,11 @@ public class SnakeGame extends Game {
 
         //если объект "яблоко" не существует, то создаем его
         if (!apple.isAlive) {
+            //увеличиваем очки на 5 за съеденное яблоко
+            score += 5;
+            setScore(score);
+            turnDelay -= 10;
+            setTurnTimer(turnDelay);
             createNewApple();
         }
         //если "мертва" наша змейка => тогда конец игры
